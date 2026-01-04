@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from .exercise_schema import ExerciseResponse
 from .set_schema import SetCreate, SetResponse
@@ -22,9 +22,6 @@ class WorkoutExerciseResponse(WorkoutExerciseBase):
     exercise_catalog: ExerciseResponse
     sets: List[SetResponse] = []
 
-    class Config:
-        from_attributes = True
-
 
 class WorkoutBase(BaseModel):
     date: date
@@ -41,5 +38,10 @@ class WorkoutResponse(WorkoutBase):
     created_at: Optional[datetime] = None
     exercises: List[WorkoutExerciseResponse] = []
 
-    class Config:
-        from_attributes = True
+
+class WorkoutUpdate(BaseModel):
+    date: Optional[date] = None
+    notes: Optional[str] = None
+    exercises: Optional[List['WorkoutExerciseCreate']] = None
+
+    model_config = ConfigDict(from_attributes=True)
