@@ -11,7 +11,7 @@ from app.core.exceptions import (
     DatabaseSystemException
 )
 from app.models import Exercise
-from app.schemas.exercise_schema import ExerciseCreate, ExerciseBase
+from app.schemas.exercise_schema import ExerciseCreate, ExerciseUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -93,11 +93,12 @@ def create_custom_exercise(db: Session, exercise_in: ExerciseCreate, user_id: in
         raise DatabaseSystemException(str(e))
 
 
-def update_exercise(db: Session, exercise_id: int, exercise_in: ExerciseBase, user_id: int) -> Exercise:
+def update_exercise(db: Session, exercise_id: int, exercise_in: ExerciseUpdate, user_id: int) -> Exercise:
     """
     Updates an exercise.
     Prerequisite: User must own the exercise.
     """
+    logger.debug(f"Updating exercise id={exercise_id} by user {user_id}")
     stmt = select(Exercise).where(Exercise.id == exercise_id)
     exercise = db.scalar(stmt)
 
@@ -129,6 +130,7 @@ def delete_exercise(db: Session, exercise_id: int, user_id: int) -> None:
     Deletes an exercise.
     Prerequisite: User must own the exercise.
     """
+    logger.debug(f"Deleting exercise id={exercise_id} by user {user_id}")
     stmt = select(Exercise).where(Exercise.id == exercise_id)
     exercise = db.scalar(stmt)
 

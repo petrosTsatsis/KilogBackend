@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from pydantic import BaseModel, ConfigDict
 
@@ -28,6 +28,6 @@ class UserResponse(UserBase):
 
 
 class UserResponseDetails(UserResponse):
-    workouts: List[WorkoutResponse] = []
+    workouts: Sequence[WorkoutResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
