@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SetBase(BaseModel):
@@ -18,5 +18,4 @@ class SetResponse(SetBase):
     id: int
     workout_exercise_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
