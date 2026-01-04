@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -151,4 +152,15 @@ def delete_user(db: Session, user_id: int) -> None:
     except SQLAlchemyError as e:
         db.rollback()
         logger.error(f"DB Error deleting user: {e}")
+        raise DatabaseSystemException(str(e))
+
+
+def get_user_by_auth_id(db: Session, auth_id: str) -> Optional[User]:
+    """
+    Find a user by their Clerk Auth ID (sub).
+    """
+    try:
+        return db.scalar(select(User).where(User.auth_id == auth_id))
+    except SQLAlchemyError as e:
+        logger.error(f"DB Error fetching user by auth_id {auth_id}: {e}")
         raise DatabaseSystemException(str(e))

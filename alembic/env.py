@@ -6,6 +6,8 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from app.models import User, Exercise, Workout, WorkoutExercise, Set  # noqa: F401
+
 # -----------------------------------------------------------
 # 1. SETUP PYTHON PATH
 # -----------------------------------------------------------

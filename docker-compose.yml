@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app
+      - ./app:/app/app
     env_file:
       - ./.env
     # Override command to enable hot-reload for development

@@ -18,6 +18,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     # name, url, description etc.
+    username: Optional[str] = None
     last_login_at: Optional[datetime] = None
 
 

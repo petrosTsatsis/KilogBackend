@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core import exceptions, errors
+from app.routers import webhooks
 
 app = FastAPI(
     title="Kilog API", version="1.0.0", description="API for the Kilog service."
@@ -30,8 +31,8 @@ app.add_exception_handler(exceptions.BusinessRuleViolationException, errors.busi
 # Fallback
 app.add_exception_handler(exceptions.FitAppException, errors.app_exception_handler)
 
-
 # --- ROUTERS ---
+app.include_router(webhooks.router)
 
 
 @app.get("/")
