@@ -1,6 +1,21 @@
-version: '3.8'
-
 services:
+
+  api:
+    build: ./
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app  # Syncs your code live (Hot Reload)
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/db_isolog
+      # Add other keys here or use env_file
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    # Override command to enable hot-reload for development
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
   db:
     image: postgres:15-alpine
     container_name: kilog_db
