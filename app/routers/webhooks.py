@@ -50,11 +50,7 @@ async def handle_clerk_webhook(
             clerk_id = event_data.get("id")
             email_addresses = event_data.get("email_addresses", [])
             email = email_addresses[0]["email_address"] if email_addresses else None
-
-            # Smart Username: Clerk Username -> Email Prefix -> Fallback
-            username = event_data.get("username")
-            if not username and email:
-                username = email.split("@")[0]
+            username = email.split("@")[0]
 
             if not email:
                 logger.error(f"Skipping user {clerk_id}: No email found")

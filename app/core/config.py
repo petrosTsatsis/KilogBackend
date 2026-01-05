@@ -2,8 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Kilog"
-    PROJECT_VERSION: str = "0.1.0"
+    PROJECT_NAME: str
+    PROJECT_VERSION: str
 
     JWT_KEY: str
     CLERK_SECRET_KEY: str
@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
 
-    ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    ENVIRONMENT: str
+    DEBUG: bool
 
     model_config = SettingsConfigDict(
         env_file=".env",
