@@ -24,7 +24,6 @@ def get_personal_best(db: Session, user_id: int, exercise_id: int) -> Optional[f
             .where(Workout.user_id == user_id)
             .where(WorkoutExercise.exercise_id == exercise_id)
         )
-        # Returns None if no history exists
         return db.scalar(stmt)
     except SQLAlchemyError as e:
         logger.error(f"DB Error calculating PB: {e}")
@@ -52,7 +51,6 @@ def get_exercise_progress(db: Session, user_id: int, exercise_id: int, limit: in
 
         results = db.execute(stmt).all()
 
-        # Convert to clean list of dicts for the API
         return [
             {"date": row.date, "weight": row.top_weight}
             for row in results
