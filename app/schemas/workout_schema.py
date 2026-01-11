@@ -24,6 +24,7 @@ class WorkoutExerciseResponse(WorkoutExerciseBase):
 
 
 class WorkoutBase(BaseModel):
+    name: Optional[str] = None
     date: date
     notes: Optional[str] = None
 
@@ -40,6 +41,7 @@ class WorkoutResponse(WorkoutBase):
 
 
 class WorkoutUpdate(BaseModel):
+    name: Optional[str] = None
     date: Optional[date] = None
     notes: Optional[str] = None
     exercises: Optional[List['WorkoutExerciseCreate']] = None

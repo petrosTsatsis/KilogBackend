@@ -2,15 +2,19 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core import exceptions, errors
-from app.routers import webhooks
+from app.core.config import settings
+from app.routers import webhooks, exercises, workouts, users, analytics, workout_plans
 
 app = FastAPI(
     title="Kilog API", version="1.0.0", description="API for the Kilog service."
 )
 
+# Parse CORS origins from environment variable (comma-separated)
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,6 +37,11 @@ app.add_exception_handler(exceptions.FitAppException, errors.app_exception_handl
 
 # --- ROUTERS ---
 app.include_router(webhooks.router)
+app.include_router(exercises.router, prefix="/api")
+app.include_router(workouts.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
+app.include_router(analytics.router, prefix="/api")
+app.include_router(workout_plans.router, prefix="/api")
 
 
 @app.get("/")

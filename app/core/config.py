@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     JWT_KEY: str
     CLERK_SECRET_KEY: str
     CLERK_WEBHOOK_SECRET: str
+    # Optional: Clerk frontend API for JWKS verification
+    # e.g., "your-app.clerk.accounts.dev" - if not set, will be derived from CLERK_SECRET_KEY
+    CLERK_FRONTEND_API: str = ""
 
     DATABASE_URL: str
 
@@ -18,6 +21,9 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: str
     DEBUG: bool
+
+    # CORS configuration - comma-separated list of allowed origins
+    CORS_ORIGINS: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(
         env_file=".env",

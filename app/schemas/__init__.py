@@ -3,6 +3,11 @@ from .set_schema import SetCreate, SetResponse
 from .user_schema import UserCreate, UserResponse, UserUpdate, UserResponseDetails
 from .workout_schema import WorkoutExerciseCreate, WorkoutExerciseResponse, WorkoutCreate, WorkoutResponse, \
     WorkoutUpdate
+from .workout_plan_schema import (
+    WorkoutPlanCreate, WorkoutPlanResponse, WorkoutPlanUpdate,
+    WorkoutPlanDayCreate, WorkoutPlanDayResponse,
+    PlannedExercise, TodayPlanResponse
+)
 
 __all__ = [
     ExerciseResponse,
@@ -18,5 +23,12 @@ __all__ = [
     WorkoutCreate,
     WorkoutUpdate,
     WorkoutExerciseResponse,
-    WorkoutExerciseCreate
+    WorkoutExerciseCreate,
+    WorkoutPlanCreate,
+    WorkoutPlanResponse,
+    WorkoutPlanUpdate,
+    WorkoutPlanDayCreate,
+    WorkoutPlanDayResponse,
+    PlannedExercise,
+    TodayPlanResponse
 ]

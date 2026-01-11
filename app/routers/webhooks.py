@@ -1,12 +1,12 @@
 import json
 import logging
-import os
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Request, Depends, HTTPException
 from sqlalchemy.orm import Session
 from svix.webhooks import Webhook
 
+from app.core.config import settings
 from app.database import get_db
 from app.schemas import UserCreate, UserUpdate
 from app.services import user_service
@@ -20,10 +20,10 @@ async def handle_clerk_webhook(
         request: Request,
         db: Session = Depends(get_db)
 ):
-    webhook_secret = os.getenv("CLERK_WEBHOOK_SECRET")
+    webhook_secret = settings.CLERK_WEBHOOK_SECRET
     if not webhook_secret:
         logger.error("CLERK_WEBHOOK_SECRET is not set in environment")
-        raise HTTPException(status_code=500, detail="Webhook secret not configured")
+        raise HTTPException(status_code=500, detail="Webhook configuration error")
 
     # 1. Read & Verify Signature
     body = await request.body()
@@ -112,6 +112,7 @@ async def handle_clerk_webhook(
     except Exception as e:
         logger.error(f"Error processing webhook {event_type}: {e}")
         # Return 200 to Clerk so they don't retry endlessly on logic errors
-        return {"status": "error", "detail": str(e)}
+        # Don't expose internal error details in response
+        return {"status": "error", "detail": "Internal processing error"}
 
     return {"status": "success"}

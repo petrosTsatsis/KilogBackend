@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Date, func, Text
+from sqlalchemy import Column, Integer, ForeignKey, Date, func, Text, String
 from sqlalchemy.orm import relationship
 
 from ..database import Base
@@ -12,6 +12,7 @@ class Workout(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
+    name = Column(String(255), nullable=True)
     date = Column(Date, default=func.now())
     notes = Column(Text, nullable=True)
 
