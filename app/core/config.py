@@ -23,12 +23,10 @@ class Settings(BaseSettings):
     DEBUG: bool
 
     # CORS configuration - comma-separated list of allowed origins
-    CORS_ORIGINS: str = "http://localhost:5173"
+    CORS_ORIGINS: str = "http://localhost:5173", "https://kilog-app.vercel.app/"
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
 
