@@ -47,3 +47,9 @@ app.include_router(workout_plans.router, prefix="/api")
 @app.get("/")
 async def home() -> dict[str, str]:
     return {"message": "Welcome to Kilog."}
+
+
+@app.get("/health")
+async def health_check() -> dict[str, str]:
+    """Health check endpoint for Render deployment."""
+    return {"status": "healthy"}

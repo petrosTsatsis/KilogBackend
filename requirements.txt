@@ -10,3 +10,5 @@ clerk-backend-api>=4.0.0
 svix>=1.16.0
 httpx>=0.26.0
 email-validator>=2.1.0
+PyJWT>=2.8.0
+gunicorn>=21.0.0
