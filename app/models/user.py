@@ -28,3 +28,4 @@ class User(Base):
     workouts = relationship("Workout", back_populates="user")
     exercises = relationship("Exercise", back_populates="user")
     workout_plans = relationship("WorkoutPlan", back_populates="user")
+    profile = relationship("UserProfile", back_populates="user", uselist=False)

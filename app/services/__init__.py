@@ -1,5 +1,6 @@
 from . import (
     user_service,
+    user_profile_service,
     analytics_service,
     exercise_service,
     workout_service,
@@ -8,6 +9,7 @@ from . import (
 
 __all__ = [
     "user_service",
+    "user_profile_service",
     "analytics_service",
     "exercise_service",
     "workout_service",

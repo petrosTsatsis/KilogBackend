@@ -3,7 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core import exceptions, errors
 from app.core.config import settings
-from app.routers import webhooks, exercises, workouts, users, analytics, workout_plans
+from app.routers import webhooks, exercises, workouts, users, analytics, workout_plans, onboarding
 
 app = FastAPI(
     title="Kilog API", version="1.0.0", description="API for the Kilog service."
@@ -42,6 +42,7 @@ app.include_router(workouts.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(workout_plans.router, prefix="/api")
+app.include_router(onboarding.router, prefix="/api")
 
 
 @app.get("/")
