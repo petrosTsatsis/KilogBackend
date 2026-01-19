@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.core.exceptions import DatabaseSystemException
 from app.models import Workout, WorkoutExercise, Set, Exercise
+from app.models.user_profile import UserProfile
+from app.services import strength_service
 
 logger = logging.getLogger(__name__)
 
@@ -516,4 +518,62 @@ def get_stats_summary(db: Session, user_id: int) -> Dict[str, Any]:
 
     except SQLAlchemyError as e:
         logger.error(f"DB Error fetching stats summary: {e}")
+        raise DatabaseSystemException(str(e))
+
+
+def get_all_exercise_records_with_1rm(db: Session, user_id: int) -> List[Dict[str, Any]]:
+    """
+    Returns personal bests with enhanced 1RM and strength level data.
+    Extends get_all_exercise_records with calculated 1RM, strength level,
+    thresholds, and progress percentage.
+    """
+    try:
+        # Get base records
+        records = get_all_exercise_records(db, user_id)
+
+        if not records:
+            return []
+
+        # Get user's body weight for strength level calculation
+        profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        body_weight = profile.weight_kg if profile else None
+
+        # Enhance each record with 1RM data
+        enhanced_records = []
+        for record in records:
+            weight = record["max_weight"]
+            reps = record["reps"]
+            exercise_name = record["exercise_name"]
+
+            # Calculate estimated 1RM
+            estimated_1rm = strength_service.calculate_1rm(weight, reps)
+
+            # Get strength level and thresholds
+            strength_level = strength_service.get_strength_level(
+                estimated_1rm, body_weight, exercise_name
+            )
+
+            strength_thresholds = None
+            percentage_to_next = None
+
+            if body_weight and body_weight > 0:
+                strength_thresholds = strength_service.get_strength_thresholds(
+                    body_weight, exercise_name
+                )
+                percentage_to_next = strength_service.get_percentage_to_next_level(
+                    estimated_1rm, body_weight, exercise_name
+                )
+
+            enhanced_records.append({
+                **record,
+                "estimated_1rm": estimated_1rm,
+                "strength_level": strength_level,
+                "strength_thresholds": strength_thresholds,
+                "percentage_to_next_level": percentage_to_next,
+            })
+
+        return enhanced_records
+
+    except SQLAlchemyError as e:
+        logger.error(f"DB Error fetching enhanced records: {e}")
         raise DatabaseSystemException(str(e))

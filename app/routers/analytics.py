@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User
-from app.services import analytics_service
+from app.services import analytics_service, progression_service
 from app.utils.auth import get_current_user
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
@@ -106,6 +106,35 @@ class StatsSummaryResponse(BaseModel):
     unique_exercises: int
     current_streak: int
     this_month_workouts: int
+
+
+class StrengthThresholds(BaseModel):
+    beginner: float
+    intermediate: float
+    advanced: float
+    elite: float
+
+
+class EnhancedExerciseRecord(BaseModel):
+    exercise_id: int
+    exercise_name: str
+    category: Optional[str]
+    max_weight: float
+    reps: int
+    date_achieved: str
+    estimated_1rm: float
+    strength_level: str  # beginner, intermediate, advanced, elite, unknown
+    strength_thresholds: Optional[StrengthThresholds]
+    percentage_to_next_level: Optional[float]
+
+
+class ProgressionSuggestionResponse(BaseModel):
+    suggested_weight: float
+    suggested_reps: int
+    strategy: str  # strength, hypertrophy
+    explanation: str
+    previous_weight: float
+    previous_reps: int
 
 
 # --- Endpoints ---
@@ -270,3 +299,35 @@ async def get_stats_summary(
     logger.info(f"User {current_user.id} getting stats summary")
     data = analytics_service.get_stats_summary(db, current_user.id)
     return StatsSummaryResponse(**data)
+
+
+@router.get("/records/enhanced", response_model=list[EnhancedExerciseRecord])
+async def get_enhanced_exercise_records(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get personal bests with 1RM estimates and strength levels.
+    Includes estimated 1RM, strength level classification, and progress to next level.
+    """
+    logger.info(f"User {current_user.id} getting enhanced exercise records")
+    data = analytics_service.get_all_exercise_records_with_1rm(db, current_user.id)
+    return [EnhancedExerciseRecord(**item) for item in data]
+
+
+@router.get("/exercises/{exercise_id}/suggestion", response_model=Optional[ProgressionSuggestionResponse])
+async def get_progression_suggestion(
+    exercise_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get smart progression suggestion for an exercise.
+    Analyzes previous performance and user's fitness goal to suggest
+    appropriate weight and rep targets for the next workout.
+    """
+    logger.info(f"User {current_user.id} getting progression suggestion for exercise {exercise_id}")
+    data = progression_service.get_progression_suggestion(db, current_user.id, exercise_id)
+    if not data:
+        return None
+    return ProgressionSuggestionResponse(**data)
